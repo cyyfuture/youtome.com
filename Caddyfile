@@ -1,0 +1,13 @@
+www.mchdgo.online {
+  redir https://mchdgo.online{uri} permanent
+}
+
+mchdgo.online {
+  root * /srv
+  encode zstd gzip
+
+  @static path /assets/* /app.js /styles.css /favicon.svg
+  header @static Cache-Control "public, max-age=604800"
+
+  file_server
+}
