@@ -23,7 +23,12 @@ for(const file of htmlFiles){
   if(!/<meta property="og:title" content="[^"]+"/.test(html)||!/<meta property="og:description" content="[^"]+"/.test(html))errors.push(`${pathname}: missing social metadata`);
   const socialImage=html.match(/<meta property="og:image" content="([^"]+)"/);
   if(!socialImage||!fs.existsSync(resolveUrl(socialImage[1])))errors.push(`${pathname}: missing social image`);
-  for(const alternate of locales.map(locale=>locale.hreflang))if(!html.includes(`hreflang="${alternate}"`))errors.push(`${pathname}: missing ${alternate} alternate`);
+  const sourcePath=matchedLocale.prefix?pathname.slice(matchedLocale.prefix.length):pathname;
+  for(const locale of locales){
+    const expected=`<link rel="alternate" hreflang="${locale.hreflang}" href="${siteOrigin}${locale.prefix}${sourcePath}">`;
+    if(!html.includes(expected))errors.push(`${pathname}: wrong ${locale.hreflang} alternate`);
+  }
+  if(!html.includes(`<link rel="alternate" hreflang="x-default" href="${siteOrigin}/en${sourcePath}">`))errors.push(`${pathname}: wrong x-default alternate`);
   if(!/<title>[^<]+<\/title>/.test(html)||!/<meta name="description" content="[^"]+"/.test(html))errors.push(`${pathname}: missing metadata`);
   for(const m of html.matchAll(/(?:href|src)="(\/[^"]+)"/g)){
     const url=m[1];
@@ -38,5 +43,17 @@ if(!robots.includes(`Sitemap: ${siteOrigin}/sitemap.xml`))errors.push('robots.tx
 const locs=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
 if(locs.length!==htmlFiles.length)errors.push(`sitemap has ${locs.length} URLs for ${htmlFiles.length} pages`);
 for(const url of locs){if(new URL(url).origin!==siteOrigin)errors.push(`sitemap wrong origin ${url}`);if(!fs.existsSync(resolveUrl(url)))errors.push(`sitemap missing page ${url}`)}
+const sitemapEntries=[...sitemap.matchAll(/<url><loc>([^<]+)<\/loc>(.*?)<\/url>/g)];
+if(sitemapEntries.length!==locs.length)errors.push('sitemap URL entries are malformed');
+for(const [,url,entry] of sitemapEntries){
+  const pathname=new URL(url).pathname;
+  const matchedLocale=locales.find(locale=>locale.prefix && pathname.startsWith(`${locale.prefix}/`)) || locales[0];
+  const sourcePath=matchedLocale.prefix?pathname.slice(matchedLocale.prefix.length):pathname;
+  for(const locale of locales){
+    const expected=`<xhtml:link rel="alternate" hreflang="${locale.hreflang}" href="${siteOrigin}${locale.prefix}${sourcePath}"/>`;
+    if(!entry.includes(expected))errors.push(`${pathname}: sitemap wrong ${locale.hreflang} alternate`);
+  }
+  if(!entry.includes(`<xhtml:link rel="alternate" hreflang="x-default" href="${siteOrigin}/en${sourcePath}"/>`))errors.push(`${pathname}: sitemap wrong x-default alternate`);
+}
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
 console.log(`Verified ${htmlFiles.length} pages, ${locs.length} sitemap URLs, metadata, language alternates and local links.`);

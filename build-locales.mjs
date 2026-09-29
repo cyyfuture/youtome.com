@@ -57,7 +57,7 @@ function finish(html,locale,pathname){
   if(locale.code==='ar') html=html.replace('</head>','<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet"></head>');
   if(locale.prefix) html=html.replace(/href="\/(?!assets\/|styles\.css|favicon\.svg|app\.js)([^"]*)"/g,(_,rest)=>`href="${locale.prefix}/${rest}"`);
   const alternates=locales.map(item=>`<link rel="alternate" hreflang="${item.hreflang}" href="${origin}${item.prefix}${pathname}">`).join('');
-  html=html.replace(/<link rel="canonical" href="[^"]+">/,`<link rel="canonical" href="${origin}${locale.prefix}${pathname}">${alternates}<link rel="alternate" hreflang="x-default" href="${origin}${pathname}">`);
+  html=html.replace(/<link rel="canonical" href="[^"]+">/,`<link rel="canonical" href="${origin}${locale.prefix}${pathname}">${alternates}<link rel="alternate" hreflang="x-default" href="${origin}/en${pathname}">`);
   html=html.replace('</head>',`<meta property="og:url" content="${origin}${locale.prefix}${pathname}"><meta property="og:locale" content="${locale.htmlLang.replace('-','_')}"></head>`);
   return html.replace('<a class="nav-cta"',`${languageMenu(locale,pathname)}<a class="nav-cta"`);
 }
@@ -76,7 +76,7 @@ for(const file of pages){
 }
 
 const sitemapEntries=paths.flatMap(pathname=>locales.map(locale=>{
-  const alternates=locales.map(item=>`<xhtml:link rel="alternate" hreflang="${item.hreflang}" href="${origin}${item.prefix}${pathname}"/>`).join('');
+  const alternates=locales.map(item=>`<xhtml:link rel="alternate" hreflang="${item.hreflang}" href="${origin}${item.prefix}${pathname}"/>`).join('')+`<xhtml:link rel="alternate" hreflang="x-default" href="${origin}/en${pathname}"/>`;
   return `<url><loc>${origin}${locale.prefix}${pathname}</loc>${alternates}</url>`;
 })).join('');
 fs.writeFileSync(path.join(dist,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${sitemapEntries}</urlset>`);
