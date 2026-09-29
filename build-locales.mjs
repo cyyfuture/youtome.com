@@ -47,7 +47,7 @@ function translateHtml(html,locale){
 
 function languageMenu(current,pathname){
   const links=locales.map(locale=>`<a href="${locale.prefix}${pathname}" lang="${locale.htmlLang}" ${locale.code===current.code?'aria-current="page"':''}>${locale.label}</a>`).join('');
-  const label={kk:'Тілді таңдау',ru:'Выбрать язык',en:'Choose language',zh:'选择语言',es:'Elegir idioma',ar:'اختر اللغة',fr:'Choisir la langue',tr:'Dil seçin',de:'Sprache wählen',pt:'Escolher idioma',uz:'Tilni tanlang',ko:'언어 선택'}[current.code];
+  const label={kk:'Тілді таңдау',ru:'Выбрать язык',en:'Choose language',zh:'选择语言',es:'Elegir idioma',ar:'اختر اللغة',fr:'Choisir la langue',tr:'Dil seçin',de:'Sprache wählen',pt:'Escolher idioma',uz:'Tilni tanlang',ko:'언어 선택',ja:'言語を選択'}[current.code];
   return `<details class="language-switch"><summary aria-label="${label}">${current.label}<span aria-hidden="true">⌄</span></summary><div class="language-options">${links}</div></details>`;
 }
 

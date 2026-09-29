@@ -9,6 +9,7 @@ import de from './de.mjs';
 import pt from './pt.mjs';
 import uz from './uz.mjs';
 import ko from './ko.mjs';
+import ja from './ja.mjs';
 
 export const locales=[
   {code:'kk',prefix:'',htmlLang:'kk',hreflang:'kk-KZ',label:'Қазақша',dict:kk,phrases:{image:name=>`${name} дизайн тұжырымдамасының көрінісі`,view:name=>`${name} үлгісін қарау`,concept:name=>`${name} — YOUTOME құрама үй тұжырымдамасы. Дизайнымен танысып, жобаңызға лайық нұсқаларды талқылаңыз.`}},
@@ -22,5 +23,6 @@ export const locales=[
   {code:'de',prefix:'/de',htmlLang:'de',hreflang:'de',label:'Deutsch',dict:de,phrases:{image:name=>`Designvisualisierung des Konzepts ${name}`,view:name=>`${name} entdecken`,concept:name=>`${name} ist ein Fertighauskonzept von YOUTOME. Entdecken Sie das Design und besprechen Sie Optionen für Ihr Projekt.`}},
   {code:'pt',prefix:'/pt',htmlLang:'pt',hreflang:'pt',label:'Português',dict:pt,phrases:{image:name=>`Visualização do conceito ${name}`,view:name=>`Explorar ${name}`,concept:name=>`${name} é um conceito de casa pré-fabricada YOUTOME. Conheça o design e converse sobre as opções para seu projeto.`}},
   {code:'uz',prefix:'/uz',htmlLang:'uz',hreflang:'uz',label:'O‘zbekcha',dict:uz,phrases:{image:name=>`${name} konsepsiyasi tasviri`,view:name=>`${name} modelini ko‘ring`,concept:name=>`${name} — YOUTOME yig‘ma uy konsepsiyasi. Dizaynni ko‘ring va loyihangizga mos variantlarni muhokama qiling.`}},
-  {code:'ko',prefix:'/ko',htmlLang:'ko',hreflang:'ko',label:'한국어',dict:ko,phrases:{image:name=>`${name} 디자인 콘셉트 이미지`,view:name=>`${name} 살펴보기`,concept:name=>`${name}: YOUTOME 조립식 주택 콘셉트입니다. 디자인을 살펴보고 프로젝트에 맞는 선택 사항을 상담하세요.`}}
+  {code:'ko',prefix:'/ko',htmlLang:'ko',hreflang:'ko',label:'한국어',dict:ko,phrases:{image:name=>`${name} 디자인 콘셉트 이미지`,view:name=>`${name} 살펴보기`,concept:name=>`${name}: YOUTOME 조립식 주택 콘셉트입니다. 디자인을 살펴보고 프로젝트에 맞는 선택 사항을 상담하세요.`}},
+  {code:'ja',prefix:'/ja',htmlLang:'ja',hreflang:'ja',label:'日本語',dict:ja,phrases:{image:name=>`${name}のデザインイメージ`,view:name=>`${name}を見る`,concept:name=>`${name}はYOUTOMEのプレハブ住宅コンセプトです。デザインをご覧になり、プロジェクトに合う選択肢をご相談ください。`}}
 ];
