@@ -11,6 +11,7 @@ const isGerman = document.documentElement.lang === 'de';
 const isPortuguese = document.documentElement.lang === 'pt';
 const isUzbek = document.documentElement.lang === 'uz';
 const isKorean = document.documentElement.lang === 'ko';
+const isJapanese = document.documentElement.lang === 'ja';
 function koreanText(en) {
   if (en.startsWith('Prefab home enquiry — ')) return `조립식 주택 문의 — ${en.slice('Prefab home enquiry — '.length)}`;
   return {
@@ -20,7 +21,16 @@ function koreanText(en) {
     'Copy unavailable in this browser. Please select and copy your details from the form.':'이 브라우저에서는 자동 복사가 불가능합니다. 입력한 내용을 직접 선택해 복사해 주세요.'
   }[en] || en;
 }
-const languageText = (kk, ru, zh, es, ar, fr, tr, de, pt, uz, en) => isKorean ? koreanText(en) : isKazakh ? kk : isRussian ? ru : isChinese ? zh : isSpanish ? es : isArabic ? ar : isFrench ? fr : isTurkish ? tr : isGerman ? de : isPortuguese ? pt : isUzbek ? uz : en;
+function japaneseText(en) {
+  if (en.startsWith('Prefab home enquiry — ')) return `プレハブ住宅のお問い合わせ — ${en.slice('Prefab home enquiry — '.length)}`;
+  return {
+    'Close menu':'メニューを閉じる',
+    'Open menu':'メニューを開く',
+    'Copied. Save these details and send them when our contact channel is available.':'コピーしました。連絡先の公開後に送れるよう、内容を保存してください。',
+    'Copy unavailable in this browser. Please select and copy your details from the form.':'このブラウザーでは自動コピーできません。フォームの内容を選択してコピーしてください。'
+  }[en] || en;
+}
+const languageText = (kk, ru, zh, es, ar, fr, tr, de, pt, uz, en) => isJapanese ? japaneseText(en) : isKorean ? koreanText(en) : isKazakh ? kk : isRussian ? ru : isChinese ? zh : isSpanish ? es : isArabic ? ar : isFrench ? fr : isTurkish ? tr : isGerman ? de : isPortuguese ? pt : isUzbek ? uz : en;
 if (menuButton && mobileMenu) {
   menuButton.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') !== 'true';
@@ -84,6 +94,8 @@ if (quoteForm) {
       ? `Ism: ${data.get('name')}\nE-pochta: ${data.get('email')}\nMamlakat / hudud: ${data.get('country') || 'Ko‘rsatilmagan'}\nQiziqtirgan model: ${data.get('model') || 'Hali bilmayman'}\n\nLoyiha tafsilotlari:\n${data.get('message')}`
       : isKorean
       ? `이름: ${data.get('name')}\n이메일: ${data.get('email')}\n국가 / 지역: ${data.get('country') || '미입력'}\n관심 모델: ${data.get('model') || '미정'}\n\n프로젝트 내용:\n${data.get('message')}`
+      : isJapanese
+      ? `お名前: ${data.get('name')}\nメールアドレス: ${data.get('email')}\n国・地域: ${data.get('country') || '未入力'}\n興味のある製品: ${data.get('model') || '未定'}\n\nプロジェクトの内容:\n${data.get('message')}`
       : `Name: ${data.get('name')}\nEmail: ${data.get('email')}\nCountry / region: ${data.get('country') || 'Not specified'}\nInterested in: ${data.get('model') || 'Not sure yet'}\n\nProject details:\n${data.get('message')}`;
     const text = subject + '\n\n' + body;
     navigator.clipboard.writeText(text).then(() => {
