@@ -2,9 +2,16 @@ import './build.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {locales} from './locales/registry.mjs';
+import {siteOrigin,siteOutputDir} from './site-config.mjs';
 
-const dist=path.resolve('dist');
-const origin='https://youtome-living.codex-super-2800.chatgpt.site';
+const dist=siteOutputDir;
+const origin=siteOrigin;
+const sourceDist=path.resolve('dist');
+if(dist!==sourceDist){
+  fs.mkdirSync(dist,{recursive:true});
+  fs.cpSync(path.join(sourceDist,'assets'),path.join(dist,'assets'),{recursive:true});
+  for(const asset of ['styles.css','app.js','favicon.svg'])fs.copyFileSync(path.join(sourceDist,asset),path.join(dist,asset));
+}
 const pages=[];
 const missing=new Map(locales.filter(locale=>locale.dict).map(locale=>[locale.code,new Set()]));
 const productNames=new Set(['Capsule One','Capsule Panorama','Capsule Grand','Apple Studio','Apple Living','Expandable One']);
@@ -40,7 +47,7 @@ function translateHtml(html,locale){
 
 function languageMenu(current,pathname){
   const links=locales.map(locale=>`<a href="${locale.prefix}${pathname}" lang="${locale.htmlLang}" ${locale.code===current.code?'aria-current="page"':''}>${locale.label}</a>`).join('');
-  const label={kk:'Тілді таңдау',ru:'Выбрать язык',en:'Choose language',zh:'选择语言',es:'Elegir idioma',ar:'اختر اللغة',fr:'Choisir la langue',tr:'Dil seçin',de:'Sprache wählen',pt:'Escolher idioma'}[current.code];
+  const label={kk:'Тілді таңдау',ru:'Выбрать язык',en:'Choose language',zh:'选择语言',es:'Elegir idioma',ar:'اختر اللغة',fr:'Choisir la langue',tr:'Dil seçin',de:'Sprache wählen',pt:'Escolher idioma',uz:'Tilni tanlang',ko:'언어 선택'}[current.code];
   return `<details class="language-switch"><summary aria-label="${label}">${current.label}<span aria-hidden="true">⌄</span></summary><div class="language-options">${links}</div></details>`;
 }
 

@@ -10,7 +10,17 @@ const isTurkish = document.documentElement.lang === 'tr';
 const isGerman = document.documentElement.lang === 'de';
 const isPortuguese = document.documentElement.lang === 'pt';
 const isUzbek = document.documentElement.lang === 'uz';
-const languageText = (kk, ru, zh, es, ar, fr, tr, de, pt, uz, en) => isKazakh ? kk : isRussian ? ru : isChinese ? zh : isSpanish ? es : isArabic ? ar : isFrench ? fr : isTurkish ? tr : isGerman ? de : isPortuguese ? pt : isUzbek ? uz : en;
+const isKorean = document.documentElement.lang === 'ko';
+function koreanText(en) {
+  if (en.startsWith('Prefab home enquiry — ')) return `조립식 주택 문의 — ${en.slice('Prefab home enquiry — '.length)}`;
+  return {
+    'Close menu':'메뉴 닫기',
+    'Open menu':'메뉴 열기',
+    'Copied. Save these details and send them when our contact channel is available.':'복사했습니다. 연락 채널이 준비되면 이 내용을 보내주세요.',
+    'Copy unavailable in this browser. Please select and copy your details from the form.':'이 브라우저에서는 자동 복사가 불가능합니다. 입력한 내용을 직접 선택해 복사해 주세요.'
+  }[en] || en;
+}
+const languageText = (kk, ru, zh, es, ar, fr, tr, de, pt, uz, en) => isKorean ? koreanText(en) : isKazakh ? kk : isRussian ? ru : isChinese ? zh : isSpanish ? es : isArabic ? ar : isFrench ? fr : isTurkish ? tr : isGerman ? de : isPortuguese ? pt : isUzbek ? uz : en;
 if (menuButton && mobileMenu) {
   menuButton.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') !== 'true';
@@ -72,6 +82,8 @@ if (quoteForm) {
       ? `Nome: ${data.get('name')}\nE-mail: ${data.get('email')}\nPaís / região: ${data.get('country') || 'Não informado'}\nModelo de interesse: ${data.get('model') || 'Ainda não sei'}\n\nDetalhes do projeto:\n${data.get('message')}`
       : isUzbek
       ? `Ism: ${data.get('name')}\nE-pochta: ${data.get('email')}\nMamlakat / hudud: ${data.get('country') || 'Ko‘rsatilmagan'}\nQiziqtirgan model: ${data.get('model') || 'Hali bilmayman'}\n\nLoyiha tafsilotlari:\n${data.get('message')}`
+      : isKorean
+      ? `이름: ${data.get('name')}\n이메일: ${data.get('email')}\n국가 / 지역: ${data.get('country') || '미입력'}\n관심 모델: ${data.get('model') || '미정'}\n\n프로젝트 내용:\n${data.get('message')}`
       : `Name: ${data.get('name')}\nEmail: ${data.get('email')}\nCountry / region: ${data.get('country') || 'Not specified'}\nInterested in: ${data.get('model') || 'Not sure yet'}\n\nProject details:\n${data.get('message')}`;
     const text = subject + '\n\n' + body;
     navigator.clipboard.writeText(text).then(() => {

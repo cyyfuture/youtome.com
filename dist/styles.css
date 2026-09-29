@@ -8,3 +8,5 @@
 .language-options{max-height:min(70vh,450px);overflow-y:auto;overscroll-behavior:contain}
 :where(a,button,summary,input,select,textarea):focus-visible{outline:3px solid #c8a76d;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+[lang="ko"] body,[lang="ko"] h1,[lang="ko"] h2,[lang="ko"] h3{font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;letter-spacing:-.035em}
+[lang="ko"] h1 em,[lang="ko"] h2 em{font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;font-style:normal;font-weight:400;letter-spacing:-.035em}
