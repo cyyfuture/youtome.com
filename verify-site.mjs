@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {locales} from './locales/registry.mjs';
-const root=path.resolve('dist');
+import {siteOrigin,siteOutputDir} from './site-config.mjs';
+const root=siteOutputDir;
 const errors=[];
 const htmlFiles=[];
 function walk(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,item.name);if(item.isDirectory())walk(file);else if(file.endsWith('.html'))htmlFiles.push(file)}}
@@ -16,9 +17,9 @@ for(const file of htmlFiles){
   const expectedHtmlTag=`<html lang="${expectedLang}"${matchedLocale.dir?` dir="${matchedLocale.dir}"`:''}>`;
   if(!html.includes(expectedHtmlTag))errors.push(`${pathname}: wrong language or direction tag`);
   const canonical=html.match(/<link rel="canonical" href="([^"]+)"/);
-  if(!canonical||new URL(canonical[1]).pathname!==pathname)errors.push(`${pathname}: wrong canonical`);
+  if(!canonical||new URL(canonical[1]).origin!==siteOrigin||new URL(canonical[1]).pathname!==pathname)errors.push(`${pathname}: wrong canonical`);
   const openGraphUrl=html.match(/<meta property="og:url" content="([^"]+)"/);
-  if(!openGraphUrl||new URL(openGraphUrl[1]).pathname!==pathname)errors.push(`${pathname}: wrong social URL`);
+  if(!openGraphUrl||new URL(openGraphUrl[1]).origin!==siteOrigin||new URL(openGraphUrl[1]).pathname!==pathname)errors.push(`${pathname}: wrong social URL`);
   if(!/<meta property="og:title" content="[^"]+"/.test(html)||!/<meta property="og:description" content="[^"]+"/.test(html))errors.push(`${pathname}: missing social metadata`);
   const socialImage=html.match(/<meta property="og:image" content="([^"]+)"/);
   if(!socialImage||!fs.existsSync(resolveUrl(socialImage[1])))errors.push(`${pathname}: missing social image`);
@@ -32,8 +33,10 @@ for(const file of htmlFiles){
   }
 }
 const sitemap=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
+const robots=fs.readFileSync(path.join(root,'robots.txt'),'utf8');
+if(!robots.includes(`Sitemap: ${siteOrigin}/sitemap.xml`))errors.push('robots.txt points to the wrong sitemap');
 const locs=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);
 if(locs.length!==htmlFiles.length)errors.push(`sitemap has ${locs.length} URLs for ${htmlFiles.length} pages`);
-for(const url of locs)if(!fs.existsSync(resolveUrl(url)))errors.push(`sitemap missing page ${url}`);
+for(const url of locs){if(new URL(url).origin!==siteOrigin)errors.push(`sitemap wrong origin ${url}`);if(!fs.existsSync(resolveUrl(url)))errors.push(`sitemap missing page ${url}`)}
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
 console.log(`Verified ${htmlFiles.length} pages, ${locs.length} sitemap URLs, metadata, language alternates and local links.`);

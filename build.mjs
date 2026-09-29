@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {siteOrigin,siteOutputDir} from './site-config.mjs';
 
-const root = path.resolve('dist');
+const root = siteOutputDir;
 const nav = [
   ['Homes', '/products/'],
   ['Why YOUTOME', '/about/'],
@@ -9,22 +10,21 @@ const nav = [
 ];
 const products = [
   {name:'Capsule One', category:'capsule', label:'CAPSULE SERIES', image:'/assets/capsule.webp', line:'A compact retreat with an unmistakable silhouette.', badge:'Compact living'},
-  {name:'Capsule Panorama', category:'capsule', label:'CAPSULE SERIES', image:'/assets/capsule.webp', line:'Panoramic views meet a fully considered interior.', badge:'Panoramic design'},
-  {name:'Capsule Grand', category:'capsule', label:'CAPSULE SERIES', image:'/assets/capsule.webp', line:'More room to unwind, framed by the landscape.', badge:'Spacious design'},
+  {name:'Capsule Panorama', category:'capsule', label:'CAPSULE SERIES', image:'/assets/capsule-panorama.webp', line:'Panoramic views meet a fully considered interior.', badge:'Panoramic design'},
+  {name:'Capsule Grand', category:'capsule', label:'CAPSULE SERIES', image:'/assets/capsule-grand.webp', line:'More room to unwind, framed by the landscape.', badge:'Spacious design'},
   {name:'Apple Studio', category:'apple', label:'APPLE CABIN', image:'/assets/apple-cabin.webp', line:'An elegant footprint for stays, studios and escapes.', badge:'Versatile footprint'},
-  {name:'Apple Living', category:'apple', label:'APPLE CABIN', image:'/assets/apple-cabin.webp', line:'A complete living space with room to feel at home.', badge:'Room to unwind'},
-  {name:'Expandable One', category:'expandable', label:'EXPANDABLE SERIES', image:'/assets/hero.webp', line:'Flexible space designed for efficient transport.', badge:'Flexible layout'},
+  {name:'Apple Living', category:'apple', label:'APPLE CABIN', image:'/assets/apple-living.webp', line:'A complete living space with room to feel at home.', badge:'Room to unwind'},
+  {name:'Expandable One', category:'expandable', label:'EXPANDABLE SERIES', image:'/assets/expandable-one.webp', line:'Flexible space designed for efficient transport.', badge:'Flexible layout'},
 ];
 const slug = name => name.toLowerCase().replaceAll(' ','-');
-const siteOrigin = 'https://youtome-living.codex-super-2800.chatgpt.site';
 const arrow = '<span aria-hidden="true">↗</span>';
 const icon = `<svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M4 27 22 8l18 19M9 24v12h26V24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 36V25h10v11" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
 
 function header(active='') { return `<header class="site-header" id="top"><div class="nav-shell"><a class="brand" href="/" aria-label="YOUTOME home"><span class="brand-mark">${icon}</span><span>YOUTOME<small>BFC CHINA · 百福中国</small></span></a><nav class="desktop-nav" aria-label="Main navigation">${nav.map(([label,href])=>`<a href="${href}" ${active===href?'aria-current="page"':''}>${label}</a>`).join('')}</nav><a class="nav-cta" href="/contact/">Plan a project ${arrow}</a><button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"><span></span><span></span></button></div><nav class="mobile-nav" id="mobile-menu" aria-label="Mobile navigation" hidden>${nav.map(([label,href])=>`<a href="${href}">${label}</a>`).join('')}<a href="/contact/">Plan a project</a></nav></header>`; }
 function footer() { return `<footer class="footer"><div class="footer-top"><div><a class="brand brand-footer" href="/"><span class="brand-mark">${icon}</span><span>YOUTOME<small>BFC CHINA · 百福中国</small></span></a><p>Thoughtful prefab spaces for remarkable places.</p></div><div><span class="footer-title">Explore</span><a href="/products/">All homes</a><a href="/about/">About us</a><a href="/contact/">Contact</a></div><div><span class="footer-title">Collections</span><a href="/products/#capsule">Capsule houses</a><a href="/products/#apple">Apple cabins</a><a href="/products/#expandable">Expandable houses</a></div><div><span class="footer-title">Talk to us</span><a href="/contact/">Project enquiry ${arrow}</a><span>Contact details coming soon</span><span>A brand of BFC China</span></div></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} YOUTOME · A BFC China (百福中国) brand. All rights reserved.</span><span>Designed for living. Built to move.</span></div></footer>`; }
 function page({title,description,active='',body,url='/'}) {
-  const socialImage=url.startsWith('/products/apple-')?'apple-cabin.webp':url.startsWith('/products/capsule-')?'capsule.webp':'hero.webp';
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101c1d"><title>${title}</title><meta name="description" content="${description}"><meta property="og:type" content="website"><meta property="og:site_name" content="YOUTOME"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:image" content="${siteOrigin}/assets/${socialImage}"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="${siteOrigin}${url}"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script></head><body>${header(active)}<main>${body}</main>${footer()}</body></html>`;
+  const socialImage=products.find(product=>`/products/${slug(product.name)}/`===url)?.image ?? '/assets/hero.webp';
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101c1d"><title>${title}</title><meta name="description" content="${description}"><meta property="og:type" content="website"><meta property="og:site_name" content="YOUTOME"><meta property="og:title" content="${title}"><meta property="og:description" content="${description}"><meta property="og:image" content="${siteOrigin}${socialImage}"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="${siteOrigin}${url}"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script></head><body>${header(active)}<main>${body}</main>${footer()}</body></html>`;
 }
 function productCard(p) { return `<article class="product-card" data-category="${p.category}"><a class="product-image" href="/products/${slug(p.name)}/"><img src="${p.image}" alt="Concept visualization of ${p.name} prefab home" loading="lazy" width="768" height="512"><span class="image-tag">${p.badge}</span></a><div class="product-body"><p class="eyebrow">${p.label}</p><div class="product-row"><h3>${p.name}</h3><a class="circle-link" href="/products/${slug(p.name)}/" aria-label="Explore ${p.name}">${arrow}</a></div><p>${p.line}</p></div></article>`; }
 
@@ -54,7 +54,7 @@ const projectGuide = `<section class="section container project-guide"><div clas
 const contactPageWithGuide=contactPage.replace('</main>',`${projectGuide}</main>`);
 const pages = [['index.html',home],['products/index.html',productsPage],['about/index.html',aboutPage],['contact/index.html',contactPageWithGuide],...detailPages];
 for (const [file,contents] of pages) { const dest=path.join(root,file); fs.mkdirSync(path.dirname(dest),{recursive:true}); fs.writeFileSync(dest,contents); }
-fs.writeFileSync(path.join(root,'robots.txt'),'User-agent: *\nAllow: /\n');
+fs.writeFileSync(path.join(root,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${siteOrigin}/sitemap.xml\n`);
 fs.writeFileSync(path.join(root,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+['/','/products/','/about/','/contact/',...products.map(p=>`/products/${slug(p.name)}/`)].map(url=>`<url><loc>${siteOrigin}${url}</loc></url>`).join('')+'</urlset>');
 console.log(`Built ${pages.length} pages`);
 
